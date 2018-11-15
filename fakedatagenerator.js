@@ -9,7 +9,7 @@ function getRandomInt(min, max) {
 }
 
 function isCreator(percentLikely) {
-  if (getRandomInt(1, 101) < percentLikely) {
+  if (getRandomInt(1, 101) < percentLikely) { // replace with i % 5
     return true;
   }
   return false;
@@ -67,7 +67,7 @@ for (let i = 1; i <= 100; i += 1) {
   for (let j = 0; j < getRandomInt(1, 26); j += 1) {
     fakeCommentData.push({
       author: faker.name.findName(),
-      authorIsCreator: isCreator(1),
+      authorIsCreator: isCreator(1), // replace with i
       profilePicture: getRandomProfilePic(),
       createdAt: faker.date.recent(),
       body: randomBodyLength(),
