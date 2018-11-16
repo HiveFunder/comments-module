@@ -13,15 +13,21 @@ app.use(express.static(path.resolve(__dirname, '../client/dist')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.get('/:authorName/:projectId', cors(), (req, res) => {
-  res.sendFile(path.resolve(__dirname, '../client/dist/index.html'), (err) => {
-    if (err) {
-      console.log(err);
-    }
-  })
+app.get(express.static(path.resolve(__dirname, '../client/dist')));
+app.get('/:authorName/:projectId',  (req, res) => {
+  console.log('request params:', req.params);
+  Project.find({"projectId": req.params.projectId})
+    .then((results) => {
+      console.log('Project comments found! results:', results);
+      res.status(200).send(JSON.stringify(results))
+    })
+    .catch((err) => {
+      console.error('Project comments not found:', err);
+      res.status(400).send(err);
+    });
 })
 
-app.get('/:authorName/:projectId/comments', cors(), (req, res) => {
+app.get('/:authorName/:projectId/comments', (req, res) => {
   console.log('request params:', req.params);
   Project.find({"projectId": req.params.projectId})
     .then((results) => {

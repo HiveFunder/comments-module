@@ -1,10 +1,8 @@
 const faker = require('faker');
 const fs = require('fs');
-
-// const fakeBulkProjects = fs.createWriteStream('fakeBulkProjects.json', { flags : 'w' });
-// fakeBulkProjects.on('data', (fakeProject) => {
-//   fakeBulkProjects.write(JSON.stringify(fakeProject));
-// });
+const path = require('path');
+const sprintf = require('sprintf-js').sprintf;
+const imagesDir = [];
 
 const fakeBulkProjects = fs.createWriteStream('fakeBulkProjects.json', { flags : 'w' });
 fakeBulkProjects.on('data', (chunk) => {
@@ -16,14 +14,6 @@ fakeBulkProjects.write('[');
 let recordsMade = 0;
 let startTime = new Date();
 let endTime;
-// fakeBulkProjects.on('drain', () => {
-//   recordsMade += 1;
-// });
-
-// setInterval(() => {
-//   console.log(recordsMade, 'records written!', new Date());
-//   recordsMade = 0;
-// }, 1000);
 
 function getRandomInt(min, max) {
   const minVal = Math.ceil(min);
@@ -38,19 +28,22 @@ function isCreator(percentLikely) {
   return false;
 }
 
-let otherPics = [];
+const otherPics = [];
+const imageDir = 'images';
+let imageName;
+let imagePath;
 
-for(let i = 0; i < 1000; i += 1) {
-  otherPics.push(faker.image.avatar())
+for (let i = 0; i < 1000; i += 1) {
+  imageName = sprintf('%05s.jpg', i);
+  imagePath = path.join(imageDir, imageName);
+  otherPics.push(imagePath);
 }
 
-
-
 function getRandomProfilePic() {
-  const defaultProfilePic = 'https://i.postimg.cc/3JMZ83vC/Screen-Shot-2018-11-01-at-10-56-59-AM.png';
+  const defaultProfilePic = '';
   const intRange = otherPics.length * 2;
   const randomInt = getRandomInt(0, intRange);
-  if (randomInt >= otherPics.length) {
+  if (randomInt > otherPics.length) {
     return defaultProfilePic;
   }
   return otherPics[randomInt];
@@ -80,7 +73,7 @@ function generateReplies() {
 // let projects = [];
 let projectsChunk = '';
 const projectsToMake = 10000000;
-const batchSize = 10000
+const batchSize = 125000;
 for (let i = 1; i <= projectsToMake; i += 1) {
   const fakeCommentData = [];
   for (let j = 0; j < getRandomInt(1, 26); j += 1) {
@@ -102,7 +95,7 @@ for (let i = 1; i <= projectsToMake; i += 1) {
     projectId: i,
     comments: fakeCommentData,
   }
-  if (i === 0) {
+  if (i === 1) {
     projectsChunk += JSON.stringify(fakeProject);
   } else {
     projectsChunk += `,${JSON.stringify(fakeProject)}`;

@@ -1,50 +1,36 @@
-const Promise = require('bluebird');
-const request = Promise.promisify(require('request'));
+const request = require('request');
+const fs = require('fs');
+const path = require('path');
+const sprintf = require('sprintf-js').sprintf;
 
-const faker = require('faker');
-const filesystem = require('fs');
-const fs = filesystem.promises;
-var Jimp = require('jimp');
+const fileCount = 0;
+const imagesToDownload = 1000;
+const imageDir = 'images';
 
-Promise.promisifyAll(request);
-
-let fileCount = 0;
-const fileName = `thumbnail_${fileCount}.jpg`
-const imagesToDownload = 2;
-
-downloadImages = () => {
-  if (imagesToDownload > fileCount) {
-    console.log('setting timeout......');
-    setTimeout(() => {
-      request.get(faker.image.avatar())
-        .then((results) => {
-            console.log('writing big picture');
-            results.pipe()
-            fs.writeFile('bigPicture.jpg', results.body)
-              .then((results) => {
-                console.log('reading......')
-                Jimp.read('bigPicture.jpg', (err, bigPicture) => {
-                  if (err) {
-                    throw err;
-                  } else {
-                    console.log('resizing....');
-                    bigPicture
-                      .resize(150, 112) // resize
-                      .quality(60) // set JPEG quality
-                      .write(fileName); // save
-                  }
-                  downloadImages();
-                });
-                fileCount += 1;
-              })
-              .catch((err) => console.error('Resize failed! err:', err));
-          })
-        .catch((error) => {
-          console.error('Request error:', error); // Print the error if one occurred
-          return;
-        });
-    }, 5000)
-  }
+const urlOptions = {
+  baseUrl: 'https://loremflickr.com',
+  width: '150',
+  height: '112',
+  topic: 'profilepic',
 };
 
-downloadImages();
+const requestDelay = 3000;
+let timeout = 0;
+
+const url =`${urlOptions.baseUrl}/${urlOptions.width}/${urlOptions.height}/${urlOptions.topic}`;
+
+for (let i = 0; i < imagesToDownload; i += 1) {
+  let imageName = sprintf('%05s.jpg', i);
+  let imagePath = path.join(imageDir, imageName);
+  setTimeout(() => {
+    let stream = request(url).pipe(fs.createWriteStream(imagePath));
+    stream.on('finish', (err) => {
+      if (err) {
+        console.error(err);
+      } else {
+        console.log(`Image ${i} created at images/${imageName}`);
+      }
+    });
+  }, timeout);
+  timeout += requestDelay;
+}

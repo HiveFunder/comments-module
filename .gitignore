@@ -1,6 +1,8 @@
 node_modules/
 client/dist/bundle.js
 coverage/
+fakeBulkProjects.json
+images/
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
