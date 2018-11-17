@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
+
 mongoose.connect(`mongodb://localhost:27017/hiveFundComments`, {}, (err) => {
   if (err) {
     console.log('OMG! Failed to connect to database! :(');

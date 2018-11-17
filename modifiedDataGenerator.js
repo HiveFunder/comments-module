@@ -70,7 +70,6 @@ function generateReplies() {
   return replies;
 }
 
-// let projects = [];
 let projectsChunk = '';
 const projectsToMake = 10000000;
 const batchSize = 125000;
@@ -87,10 +86,7 @@ for (let i = 1; i <= projectsToMake; i += 1) {
       replies: generateReplies(),
     });
   }
-  // projects.push({
-  //   projectId: i,
-  //   comments: fakeCommentData,
-  // });
+
   const fakeProject = {
     projectId: i,
     comments: fakeCommentData,
@@ -112,44 +108,3 @@ for (let i = 1; i <= projectsToMake; i += 1) {
 
 fakeBulkProjects.write(']');
 fakeBulkProjects.end();
-// var i = fs.openSync(JSON.stringify(projects), 'r');
-// var o = fs.openSync('commentData.json', 'w');
-
-// var buf = new Buffer(1024 * 1024), len, prev = '';
-
-// while(len = fs.readSync(i, buf, 0, buf.length)) {
-
-//     var a = (prev + buf.toString('ascii', 0, len)).split('\n');
-//     prev = len === buf.length ? '\n' + a.splice(a.length - 1)[0] : '';
-
-//     var out = '';
-//     a.forEach(function(line) {
-
-//         if(!line)
-//             return;
-
-//         // do something with your line here
-
-//         out += line + '\n';
-//     });
-
-//     var bout = new Buffer(out, 'ascii');
-//     fs.writeSync(o, bout, 0, bout.length);
-// }
-
-// fs.closeSync(o);
-// fs.closeSync(i);
-
-// var writeStream = fs.createWriteStream('commentsData.json');
-// var readStream = fs.createReadStream(JSON.stringify(projects));
-
-// readStream.pipe(writeStream);
-// writeStream.on('close', function () {
-//     console.log('File Write Success!');
-// });
-
-// fs.writeFile('commentData.json', JSON.stringify(projects), function (err) {
-//     if (err)
-//         return console.log(err);
-//     console.log('file write success');
-// });

@@ -50,6 +50,7 @@ function generateReplies() {
   const replies = [];
   for (let i = 0; i < getRandomInt(0, 4); i += 1) {
     replies.push({
+      id: i,
       author: faker.name.findName(),
       authorIsCreator: isCreator(50),
       profilePicture: getRandomProfilePic(),
