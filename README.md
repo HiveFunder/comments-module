@@ -9,3 +9,20 @@ This is a single module in a 4 module application. The project's repo can be fou
 My repository for this single comments module can be found at: https://github.com/FEC-Kickstand/comments-module
 
 Thank you for reading my README file and I hope you like my module :D
+
+##CRUD API documentation
+
+###Routes
+
+####Create
+- [Creating a Comment on a project] POST /:authorName/:projectId
+
+####Read
+- [Getting all comments for a project] GET /:authorName/:projectId
+
+####Update
+- [Editing a comment on a project] PUT /:authorName/:projectId/:commentId
+
+####Delete
+- [Deleting a comment on a project] DELETE /:authorName/:projectId/:commentId
+
