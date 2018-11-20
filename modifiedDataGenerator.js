@@ -4,49 +4,46 @@ const path = require('path');
 const sprintf = require('sprintf-js').sprintf;
 const imagesDir = [];
 
-const fakeBulkProjects = fs.createWriteStream('fakeBulkProjects.json', { flags : 'w' });
+const fakeBulkProjects = fs.createWriteStream('fakeBulkProjects.json');
 fakeBulkProjects.on('data', (chunk) => {
-  fakeBulkProjects.write(chunk);
+  console.log(`${chunk[1]} records made. Approximately ${(Math.abs((startTime - new Date().getTime()) / 1000 / 60 * (projectsToMake - chunk[1]) / batchSize))} minutes remain`);
+  fakeBulkProjects.write(chunk[0]);
 });
 
 fakeBulkProjects.write('[');
 
-let recordsMade = 0;
-let startTime = new Date();
-let endTime;
+var recordsMade = 0;
+var startTime = new Date().getTime();
 
 function getRandomInt(min, max) {
-  const minVal = Math.ceil(min);
-  const maxVal = Math.floor(max);
-  return Math.floor(Math.random() * (maxVal - minVal)) + minVal;
+  return Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min))) + Math.ceil(min);
 }
 
 function isCreator(percentLikely) {
   if (getRandomInt(1, 101) < percentLikely) {
-    return true;
+    return fakeProject.author;
   }
-  return false;
+  return faker.name.findName();
 }
 
 const otherPics = [];
-const imageDir = 'images';
-let imageName;
-let imagePath;
+var imageName;
+var imagePath;
 
 for (let i = 0; i < 1000; i += 1) {
   imageName = sprintf('%05s.jpg', i);
-  imagePath = path.join(imageDir, imageName);
-  otherPics.push(imagePath);
+  otherPics.push(imageName);
 }
 
+var intRange;
+var intRange;
+const defaultProfilePic = '00000.jpg';
+
 function getRandomProfilePic() {
-  const defaultProfilePic = '';
-  const intRange = otherPics.length * 2;
-  const randomInt = getRandomInt(0, intRange);
-  if (randomInt > otherPics.length) {
+  if (getRandomInt(0, otherPics.length * 2) > otherPics.length) {
     return defaultProfilePic;
   }
-  return otherPics[randomInt];
+  return otherPics[getRandomInt(0, otherPics.length)];
 }
 
 function randomBodyLength() {
@@ -56,10 +53,12 @@ function randomBodyLength() {
   return faker.lorem.paragraphs();
 }
 
+var replies;
 function generateReplies() {
-  const replies = [];
-  for (let i = 0; i < getRandomInt(0, 4); i += 1) {
+  replies = [];
+  for (var i = 0; i < getRandomInt(0, 4); i += 1) {
     replies.push({
+      _id: i,
       author: faker.name.findName(),
       authorIsCreator: isCreator(50),
       profilePicture: getRandomProfilePic(),
@@ -70,16 +69,22 @@ function generateReplies() {
   return replies;
 }
 
-let projectsChunk = '';
 const projectsToMake = 10000000;
 const batchSize = 125000;
+var projectsChunk = '';
+var fakeCommentData = [];
+var fakeProject;
 for (let i = 1; i <= projectsToMake; i += 1) {
-  const fakeCommentData = [];
+  fakeCommentData = [];
+  fakeProject = {
+    _id: i,
+    author: faker.name.findName(),
+    comments: fakeCommentData,
+  }
   for (let j = 0; j < getRandomInt(1, 26); j += 1) {
     fakeCommentData.push({
-      id: j,
-      author: faker.name.findName(),
-      authorIsCreator: isCreator(1),
+      _id: j,
+      author: isCreator(1),
       profilePicture: getRandomProfilePic(),
       createdAt: faker.date.recent(),
       body: randomBodyLength(),
@@ -87,10 +92,6 @@ for (let i = 1; i <= projectsToMake; i += 1) {
     });
   }
 
-  const fakeProject = {
-    projectId: i,
-    comments: fakeCommentData,
-  }
   if (i === 1) {
     projectsChunk += JSON.stringify(fakeProject);
   } else {
@@ -98,13 +99,12 @@ for (let i = 1; i <= projectsToMake; i += 1) {
   }
 
   if (i % batchSize === 0) {
-    endTime = new Date()
-    console.log(i, 'records made. Last batch was at a ', Math.abs((startTime.getTime() - endTime.getTime()) / 1000 / 60 / 60 * 10000000 / batchSize), 'hour pace');
-    fakeBulkProjects.emit('data', projectsChunk);
+    fakeBulkProjects.emit('data', [projectsChunk, i]);
     projectsChunk = '';
-    startTime = endTime;
+    startTime = new Date().getTime();
   }
 }
 
+fakeBulkProjects.write(projectsChunk);
 fakeBulkProjects.write(']');
 fakeBulkProjects.end();

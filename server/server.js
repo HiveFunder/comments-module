@@ -26,17 +26,42 @@ app.get('/:authorName/:projectId/', (req, res) => {
 });
 
 app.get('/:authorName/:projectId/comments', (req, res) => {
-  Project.findOne({"projectId": req.params.projectId})
+  let id = parseInt(req.params.projectId);
+  console.log(id, typeof id);
+  Project.findOne({"_id": 15})
     .then((results) => {
       res.status(200).send(JSON.stringify(results))
     })
     .catch((err) => {
+      console.error(err);
       res.status(400).send(err);
     });
 });
 
+app.get('/:authorName/querySpeed/comments', (req, res) => {
+  console.log('Hello from querySpeed Tests!!');
+  const start = new Date().getTime();
+  let end;
+  let randomId;
+  for (let i = 0; i < 10000; i += 1) {
+    Project.findById(Math.floor(Math.random() * 1000) - 1 + 999000)
+      .then((results) => {
+        if (i === 0 || i === 9 || i === 99 || i === 999 || i === 9999) {
+          end = new Date().getTime();
+          console.log(`Completed ${i + 1} queries at ${start - end} qps!`);
+        }
+        if (i === 9999) {
+          res.send('All done!');
+        }
+      })
+      .catch((error) => {
+        console.error(`Something went wrong at query no. ${i}! Error:`, error);
+      })
+  }
+});
+
 app.post('/:authorName/:projectId', (req, res) => {
-  Project.findOne({"projectId": req.params.projectId})
+  Project.findOne({"_id": req.params.projectId})
     .then((results) => {
       results.comments.push({
         author: req.body.author,
@@ -72,14 +97,14 @@ app.post('/:authorName/:projectId/:commentId', (req, res) => {
     replies: [],
   };
   Project.findOneAndUpdate(
-    {"projectId": req.params.projectId},
+    {"_id": req.params.projectId},
     {
       $push: {
-        "comments.$[element].replies": newComment
+        "comments.$[comment].replies": newComment
       }
     },
     {
-      arrayFilters: [ { "element.id": parseInt(req.params.commentId) } ]
+      arrayFilters: [ { "comment.id": parseInt(req.params.commentId) } ]
     }
   )
     .then((results) => {
@@ -102,14 +127,14 @@ app.put('/:authorName/:projectId/:commentId', (req, res) => {
     replies: [],
   };
   Project.findOneAndUpdate(
-    {"projectId": req.params.projectId},
+    {"_id": req.params.projectId},
     {
       $set: {
-        [`comments.$[element]`]: newComment
+        [`comments.$[comment]`]: newComment
       }
     },
     {
-      arrayFilters: [ { "element.id": parseInt(req.params.commentId) } ]
+      arrayFilters: [ { "comment.id": parseInt(req.params.commentId) } ]
     },
   )
     .then((results) => {
@@ -132,14 +157,14 @@ app.put('/:authorName/:projectId/:commentId/:replyId', (req, res) => {
     replies: [],
   };
   Project.findOneAndUpdate(
-    {"projectId": req.params.projectId},
+    {"_id": req.params.projectId},
     {
       $set: {
-        "comments.$[element].replies.$[reply]": newComment
+        "comments.$[comment].replies.$[reply]": newComment
       }
     },
     {
-      arrayFilters: [ { "element.id": parseInt(req.params.commentId) }, {"reply.id": parseInt(req.params.replyId)} ]
+      arrayFilters: [ { "comment.id": parseInt(req.params.commentId) }, {"reply.id": parseInt(req.params.replyId)} ]
     },
   )
     .then((results) => {
@@ -153,7 +178,7 @@ app.put('/:authorName/:projectId/:commentId/:replyId', (req, res) => {
 
 app.delete('/:authorName/:projectId/:commentId/:replyId', (req, res) => {
   Project.findOneAndUpdate(
-    {"projectId": req.params.projectId},
+    {"_id": req.params.projectId},
     {
       $pull: {
         "comments.${req.params.commentId}.replies": {
@@ -174,7 +199,7 @@ app.delete('/:authorName/:projectId/:commentId/:replyId', (req, res) => {
 
 app.delete('/:authorName/:projectId/:commentId', (req, res) => {
   Project.findOneAndUpdate(
-    {"projectId": req.params.projectId},
+    {"_id": req.params.projectId},
     {
       $pull: { comments: {
           id: parseInt(req.params.commentId)

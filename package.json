@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "webpack --watch",
     "downloadImages": "node downloadImages.js",
-    "generateData": "node --max-old-space-size=8192 modifiedDataGenerator.js",
+    "generateData": "node --max-old-space-size=8192 backPressuredDataGen.js",
     "generateParagraphs": "node --max-old-space-size=8192 createFakeParagraphs.js",
     "seedDB": "node fakedatagenerator.js",
     "start": "nodemon server/server.js",
@@ -37,7 +37,9 @@
     "jimp": "^0.5.6",
     "jquery": "^3.3.1",
     "moment": "^2.22.2",
+    "mongodb": "^3.1.10",
     "mongoose": "^5.3.6",
+    "newrelic": "^4.11.0",
     "nodemon": "^1.18.4",
     "react": "^16.6.0",
     "react-dom": "^16.6.0",
