@@ -36,23 +36,23 @@ app.get('/:authorName/style.css/', (req, res) => {
   res.status(200).sendFile(path.resolve(__dirname, '../client/dist/style.css'))
 })
 
-app.get('/api/:authorName/:projectId/', (req, res) => {
+app.get('/:authorName/:projectId/', (req, res) => {
   res.status(200).sendFile(path.resolve(__dirname, '../client/dist/index.html'))
 });
 
-app.get('/api/:authorName/:projectId/comments', (req, res) => {
+
+app.get('/:authorName/:projectId/comments', (req, res) => {
   Models.getCommentsByProjectId(req.params.projectId, (dbErr, dbRes) => {
     if (dbErr) {
       console.log(dbErr)
       res.status(500).send();
     } else {
-      console.log(dbRes.rows[0]);
       res.send(dbRes.rows[0]);
     }
   });
 });
 
-app.post('/api/:authorName/:projectId', (req, res) => {
+app.post('/:authorName/:projectId', (req, res) => {
   const newComment = {
     id: req.body.id,
     author: req.body.author,
@@ -73,7 +73,7 @@ app.post('/api/:authorName/:projectId', (req, res) => {
   });
 });
 
-app.post('/api/:authorName/:projectId/:commentId', (req, res) => {
+app.post('/:authorName/:projectId/:commentId', (req, res) => {
   const newComment = {
     id: req.body.id,
     author: req.body.author,
@@ -94,23 +94,58 @@ app.post('/api/:authorName/:projectId/:commentId', (req, res) => {
   });
 });
 
-app.put('/api/:authorName/:projectId/:commentId', (req, res) => {
-  // Models.updateComment(req, res);
+app.put('/:authorName/:projectId/:commentId', (req, res) => {
+  // const newComment = {
+  //   id: req.body.id,
+  //   author: req.body.author,
+  //   authorIsCreator: req.body.authorIsCreator, // removed in future data generations
+  //   profilePicture: req.body.profilePicture,
+  //   createdAt: req.body.createdAt,
+  //   body: req.body.body,
+  //   replies: [],
+  // };
+
+  // Models.updateComment(req.params.projectId, req.params.commentId, (dbErr, dbRes) => {
+  //   if (dbErr) {
+  //     console.log(dbErr)
+  //     res.status(500).send();
+  //   } else {
+  //     console.log(dbRes.rows[0]);
+  //     res.status(204).send();
+  //   }
+  // });
+
+  // DELETE BELOW WHEN COMPLETE:
   res.send(/*TODO*/);
 });
 
-app.put('/api/:authorName/:projectId/:commentId/:replyId', (req, res) => {
+app.put('/:authorName/:projectId/:commentId/:replyId', (req, res) => {
+  // const newComment = {
+  //   id: req.body.id,
+  //   author: req.body.author,
+  //   authorIsCreator: req.body.authorIsCreator, // removed in future data generations
+  //   profilePicture: req.body.profilePicture,
+  //   createdAt: req.body.createdAt,
+  //   body: req.body.body,
+  //   replies: [],
+  // };
   // Models.updateReply(req, res);
+
+  // DELETE BELOW WHEN COMPLETE:
   res.send(/*TODO*/);
 });
 
-app.delete('/api/:authorName/:projectId/:commentId/:replyId', (req, res) => {
-  // Models.deleteReply(req, res);
+app.delete('/:authorName/:projectId/:commentId/:replyId', (req, res) => {
+
+  // // Models.deleteReply(req, res);
+  // DELETE BELOW WHEN COMPLETE:
   res.send(/*TODO*/);
 });
 
-app.delete('/api/:authorName/:projectId/:commentId', (req, res) => {
+app.delete('/:authorName/:projectId/:commentId', (req, res) => {
   // Models.deleteComment(req, res);
+
+  // DELETE BELOW WHEN COMPLETE:
   res.send(/*TODO*/);
 });
 

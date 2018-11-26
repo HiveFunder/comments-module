@@ -14,6 +14,7 @@
     "generateCSV": "node --max-old-space-size=8192 csvGenerator.js",
     "seedPG": "node --max-old-space-size=8192 seedPostgres.js",
     "start": "nodemon server/server.js",
+    "stress": "node stressTest.js",
     "test": "jest",
     "test:coverage": "jest --verbose --coverage",
     "webpack": "webpack"
