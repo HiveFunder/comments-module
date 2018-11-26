@@ -8,7 +8,9 @@ class App extends React.Component {
   constructor() {
     super();
     this.state = {
-      commentList: [],
+      _id: null,
+      author: null,
+      comments: [],
     };
   }
 
@@ -17,8 +19,11 @@ class App extends React.Component {
     console.log(splitURL);
     const projectId = typeof parseInt(splitURL[splitURL.length - 1]) === 'number' ? splitURL[splitURL.length - 1] : 44;
     $.get(`/foobar/${projectId}/comments`, (data) => {
+      console.log('Server response:', data);
       this.setState({
-        commentList: JSON.parse(data).comments,
+        _id: data.id,
+        author: data.author,
+        comments: data.comments,
       });
     });
   }
@@ -28,7 +33,7 @@ class App extends React.Component {
       <div className={styles.everything}>
         <div>
           <Post />
-          <List list={this.state.commentList} />
+          <List projectAuthor={this.state.author} list={this.state.comments} />
         </div>
       </div>
     );
