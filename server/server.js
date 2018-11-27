@@ -53,16 +53,7 @@ app.get('/:projectId/comments', (req, res) => {
 });
 
 app.post('/:projectId', (req, res) => {
-  const newComment = {
-    id: req.body.id,
-    author: req.body.author,
-    authorIsCreator: req.body.authorIsCreator, // removed in future data generations
-    profilePicture: req.body.profilePicture,
-    createdAt: req.body.createdAt,
-    body: req.body.body,
-    replies: [],
-  };
-  Models.createComment(req.params.projectId, newComment, (dbErr, dbRes) => {
+  Models.createComment(req.params.projectId, req.body, (dbErr, dbRes) => {
     if (dbErr) {
       console.log(dbErr)
       res.status(500).send();
@@ -74,16 +65,7 @@ app.post('/:projectId', (req, res) => {
 });
 
 app.post('/:projectId/:commentId', (req, res) => {
-  const newComment = {
-    id: req.body.id,
-    author: req.body.author,
-    authorIsCreator: req.body.authorIsCreator, // removed in future data generations
-    profilePicture: req.body.profilePicture,
-    createdAt: req.body.createdAt,
-    body: req.body.body,
-    replies: [],
-  };
-  Models.createReply(req.params.projectId, req.params.commentId, newComment, (dbErr, dbRes) => {
+  Models.createReply(req.params.projectId, req.params.commentId, req.body, (dbErr, dbRes) => {
     if (dbErr) {
       console.log(dbErr)
       res.status(500).send();
@@ -95,15 +77,6 @@ app.post('/:projectId/:commentId', (req, res) => {
 });
 
 app.put('/:projectId/:commentId', (req, res) => {
-  // const newComment = {
-  //   id: req.body.id,
-  //   author: req.body.author,
-  //   authorIsCreator: req.body.authorIsCreator, // removed in future data generations
-  //   profilePicture: req.body.profilePicture,
-  //   createdAt: req.body.createdAt,
-  //   body: req.body.body,
-  //   replies: [],
-  // };
 
   // Models.updateComment(req.params.projectId, req.params.commentId, (dbErr, dbRes) => {
   //   if (dbErr) {
@@ -120,15 +93,6 @@ app.put('/:projectId/:commentId', (req, res) => {
 });
 
 app.put('/:projectId/:commentId/:replyId', (req, res) => {
-  // const newComment = {
-  //   id: req.body.id,
-  //   author: req.body.author,
-  //   authorIsCreator: req.body.authorIsCreator, // removed in future data generations
-  //   profilePicture: req.body.profilePicture,
-  //   createdAt: req.body.createdAt,
-  //   body: req.body.body,
-  //   replies: [],
-  // };
   // Models.updateReply(req, res);
 
   // DELETE BELOW WHEN COMPLETE:
