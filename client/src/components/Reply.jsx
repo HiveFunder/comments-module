@@ -9,7 +9,7 @@ const Reply = (props) => {
   let creatorLogo;
   let greenBarSpan;
   const indentationSpan = <span className={styles.indentationSpan} />;
-  if (reply.authorIsCreator) {
+  if (reply.authorIsCreator === reply.projectAuthor) {
     creatorLogo = <img src="https://i.postimg.cc/Pr8qdjjH/Creator-Logo.png" alt="creatorlogo" className={styles.creatorLogo} />;
     greenBarSpan = <span className={styles.greenbar} />;
   }
@@ -20,7 +20,7 @@ const Reply = (props) => {
       <span>
         <div className={styles.authorPicAndTime}>
           <span>
-            <img className={styles.profilePicture} src={profilePictureURL} alt="profilepic" />
+            <img className={styles.profilePicture} src={`../images/${profilePictureURL}`} alt="profilepic" />
           </span>
           <span>
             <p className={styles.authorName}>{reply.author}</p>

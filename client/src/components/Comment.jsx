@@ -9,7 +9,7 @@ const Comment = (props) => {
   const timeAgo = moment(comment.createdAt).fromNow();
   let creatorLogo;
   let greenBarSpan;
-  if (comment.authorIsCreator) {
+  if (comment.author === comment.projectAuthor) {
     creatorLogo = <img src="https://i.postimg.cc/Pr8qdjjH/Creator-Logo.png" alt="creatorlogo" className={styles.creatorLogo} />;
     greenBarSpan = <span className={styles.greenbar} />;
   }
@@ -20,7 +20,7 @@ const Comment = (props) => {
         <span>
           <div className={styles.authorPicAndTime}>
             <span>
-              <img className={styles.profilePicture} src={profilePictureURL} alt="profilepic" />
+              <img className={styles.profilePicture} src={`../images/${profilePictureURL}`} alt="profilepic" />
             </span>
             <span>
               <p className={styles.authorName}>{comment.author}</p>
@@ -36,7 +36,7 @@ const Comment = (props) => {
           <p className={styles.commentBody}>{comment.body}</p>
         </span>
       </div>
-      <Replies replies={comment.replies} />
+      <Replies replies={comment.replies} projectAuthor={comment.projectAuthor} />
     </div>
   );
 };

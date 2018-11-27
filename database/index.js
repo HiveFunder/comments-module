@@ -1,18 +1,10 @@
-const mongoose = require('mongoose');
-mongoose.connect(`mongodb://localhost:27017/hiveFundComments`, {}, (err) => {
-  if (err) {
-    console.log('OMG! Failed to connect to database! :(');
-    console.error(err);
-  } else {
-    console.log('YAY! connected to database! :D');
-  }
-});
+const { Client } = require('pg');
+const config = require('../config.js');
+const connectionString = `postgresql://${config.PGUSER}:${config.PGPASSWORD}@${config.PGHOST}:${config.PGPORT}/${config.PGDATABASE}`
 
-const projectSchema = new mongoose.Schema({
-  projectId: Number,
-  comments: Array,
-});
+const client = new Client({
+  connectionString: connectionString,
+})
+client.connect();
 
-const Project = mongoose.model('Project', projectSchema);
-
-module.exports.Project = Project;
+module.exports = client;

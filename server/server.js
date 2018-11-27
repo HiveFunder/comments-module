@@ -1,129 +1,154 @@
+require('newrelic');
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const Project = require('../database/index.js').Project;
-
+const Models = require('../models/PostgresModels.js');
 const app = express();
 
-const port = 8081;
+const port = 3001;
+
+const deleteCallback = (dbErr, dbRes) => {
+  if (dbErr) {
+    console.log(dbErr)
+    res.status(500).send();
+  } else {
+    console.log(dbRes.rows[0]);
+    res.status(204).send();
+  }
+};
+
 
 app.use(cors());
 app.use(express.static(path.resolve(__dirname, '../client/dist')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.get(express.static(path.resolve(__dirname, '../client/dist')));
-app.get('/:authorName/:projectId',  (req, res) => {
-  console.log('request params:', req.params);
-  Project.find({"projectId": req.params.projectId})
-    .then((results) => {
-      console.log('Project comments found! results:', results);
-      res.status(200).send(JSON.stringify(results))
-    })
-    .catch((err) => {
-      console.error('Project comments not found:', err);
-      res.status(400).send(err);
-    });
+app.get('/images/:imageURL/', (req, res) => {
+  res.status(200).sendFile(path.resolve(__dirname, `../images/${req.params.imageURL}`))
 })
 
+app.get('/:authorName/bundle.js/', (req, res) => {
+  res.status(200).sendFile(path.resolve(__dirname, '../client/dist/bundle.js'))
+})
+
+app.get('/:authorName/style.css/', (req, res) => {
+  res.status(200).sendFile(path.resolve(__dirname, '../client/dist/style.css'))
+})
+
+app.get('/:authorName/:projectId/', (req, res) => {
+  res.status(200).sendFile(path.resolve(__dirname, '../client/dist/index.html'))
+});
+
+
 app.get('/:authorName/:projectId/comments', (req, res) => {
-  console.log('request params:', req.params);
-  Project.find({"projectId": req.params.projectId})
-    .then((results) => {
-      console.log('Project comments found! results:', results);
-      res.status(200).send(JSON.stringify(results))
-    })
-    .catch((err) => {
-      console.error('Project comments not found:', err);
-      res.status(400).send(err);
-    });
+  Models.getCommentsByProjectId(req.params.projectId, (dbErr, dbRes) => {
+    if (dbErr) {
+      console.log(dbErr)
+      res.status(500).send();
+    } else {
+      res.send(dbRes.rows[0]);
+    }
+  });
 });
 
 app.post('/:authorName/:projectId', (req, res) => {
-  console.log('Hello from POST!');
-  Project.find({"projectId": req.params.projectId})
-    .then((results) => {
-      console.log(results);
-      results.comments.push({
-        author: req.body.author,
-        authorIsCreator: req.body.authorIsCreator,
-        profilePicture: req.body.profilePicture,
-        createdAt: req.body.createdAt,
-        body: req.body.body,
-      });
-      results.save()
-        .then((results) => {
-          res.status(201).send('Post succeeded!')
-        })
-        .catch((err) => {
-          console.error('POST failed! Could not save results. Error:', err);
-          res.status(400).send(err);
-        });
-    })
-    .catch((err) => {
-      console.error('POST failed! Could not find project. Error:', err);
-      res.status(400).send(err);
-    });
+  const newComment = {
+    id: req.body.id,
+    author: req.body.author,
+    authorIsCreator: req.body.authorIsCreator, // removed in future data generations
+    profilePicture: req.body.profilePicture,
+    createdAt: req.body.createdAt,
+    body: req.body.body,
+    replies: [],
+  };
+  Models.createComment(req.params.projectId, newComment, (dbErr, dbRes) => {
+    if (dbErr) {
+      console.log(dbErr)
+      res.status(500).send();
+    } else {
+      console.log(dbRes.rows[0]);
+      res.status(201).send();
+    }
+  });
+});
+
+app.post('/:authorName/:projectId/:commentId', (req, res) => {
+  const newComment = {
+    id: req.body.id,
+    author: req.body.author,
+    authorIsCreator: req.body.authorIsCreator, // removed in future data generations
+    profilePicture: req.body.profilePicture,
+    createdAt: req.body.createdAt,
+    body: req.body.body,
+    replies: [],
+  };
+  Models.createReply(req.params.projectId, req.params.commentId, newComment, (dbErr, dbRes) => {
+    if (dbErr) {
+      console.log(dbErr)
+      res.status(500).send();
+    } else {
+      console.log(dbRes.rows[0]);
+      res.status(204).send();
+    }
+  });
 });
 
 app.put('/:authorName/:projectId/:commentId', (req, res) => {
-  console.log('Hello from PUT!');
-  Project.find({"projectId": req.params.projectId})
-    .then((results) => {
-      console.log(results);
-      for(let i = 0; i < results.comments.length; i++) {
-        if (results.comments[i].id === req.params.commentId) {
-          results.comments[i] = {
-            author: req.body.author,
-            authorIsCreator: req.body.authorIsCreator,
-            profilePicture: req.body.profilePicture,
-            createdAt: req.body.createdAt,
-            body: req.body.body,
-          }
-        }
-      }
-      results.save()
-        .then((results) => {
-          res.status(201).send('Post succeeded!')
-        })
-        .catch((err) => {
-          console.error('POST failed! Could not save results. Error:', err);
-          res.status(400).send(err);
-        });
-    })
-    .catch((err) => {
-      console.error('POST failed! Could not find project. Error:', err);
-      res.status(400).send(err);
-    });
+  // const newComment = {
+  //   id: req.body.id,
+  //   author: req.body.author,
+  //   authorIsCreator: req.body.authorIsCreator, // removed in future data generations
+  //   profilePicture: req.body.profilePicture,
+  //   createdAt: req.body.createdAt,
+  //   body: req.body.body,
+  //   replies: [],
+  // };
+
+  // Models.updateComment(req.params.projectId, req.params.commentId, (dbErr, dbRes) => {
+  //   if (dbErr) {
+  //     console.log(dbErr)
+  //     res.status(500).send();
+  //   } else {
+  //     console.log(dbRes.rows[0]);
+  //     res.status(204).send();
+  //   }
+  // });
+
+  // DELETE BELOW WHEN COMPLETE:
+  res.send(/*TODO*/);
+});
+
+app.put('/:authorName/:projectId/:commentId/:replyId', (req, res) => {
+  // const newComment = {
+  //   id: req.body.id,
+  //   author: req.body.author,
+  //   authorIsCreator: req.body.authorIsCreator, // removed in future data generations
+  //   profilePicture: req.body.profilePicture,
+  //   createdAt: req.body.createdAt,
+  //   body: req.body.body,
+  //   replies: [],
+  // };
+  // Models.updateReply(req, res);
+
+  // DELETE BELOW WHEN COMPLETE:
+  res.send(/*TODO*/);
+});
+
+app.delete('/:authorName/:projectId/:commentId/:replyId', (req, res) => {
+
+  // // Models.deleteReply(req, res);
+  // DELETE BELOW WHEN COMPLETE:
+  res.send(/*TODO*/);
 });
 
 app.delete('/:authorName/:projectId/:commentId', (req, res) => {
-  console.log('Hello from delete!');
-  console.log('Hello from PUT!');
-  Project.find({"projectId": req.params.projectId})
-    .then((results) => {
-      console.log(results);
-      for(let i = 0; i < results.comments.length; i++) {
-        if (results.comments[i].id === req.params.commentId) {
-          results.comments = results.comments.splice() // splice out the comment at the  index of the comment
-        }
-      }
-      results.save()
-        .then((results) => {
-          res.status(201).send('Post succeeded!')
-        })
-        .catch((err) => {
-          console.error('POST failed! Could not save results. Error:', err);
-          res.status(400).send(err);
-        });
-    })
-    .catch((err) => {
-      console.error('POST failed! Could not find project. Error:', err);
-      res.status(400).send(err);
-    });
+  // Models.deleteComment(req, res);
+
+  // DELETE BELOW WHEN COMPLETE:
+  res.send(/*TODO*/);
 });
 
 app.listen(port, () => {
-  console.log('listening..............o.o');
+  console.log(`listening on port ${port}!\n_________________\n\n`);
 });
