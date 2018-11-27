@@ -20,7 +20,7 @@ const Comment = (props) => {
         <span>
           <div className={styles.authorPicAndTime}>
             <span>
-              <img className={styles.profilePicture} src={`../images/${profilePictureURL}`} alt="profilepic" />
+              <img className={styles.profilePicture} src={`http://localhost:3001/images/${profilePictureURL}`} alt="profilepic" />
             </span>
             <span>
               <p className={styles.authorName}>{comment.author}</p>

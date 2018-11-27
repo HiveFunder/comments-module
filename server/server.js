@@ -28,20 +28,20 @@ app.get('/images/:imageURL/', (req, res) => {
   res.status(200).sendFile(path.resolve(__dirname, `../images/${req.params.imageURL}`))
 })
 
-app.get('/:authorName/bundle.js/', (req, res) => {
+app.get('/bundle.js/', (req, res) => {
   res.status(200).sendFile(path.resolve(__dirname, '../client/dist/bundle.js'))
 })
 
-app.get('/:authorName/style.css/', (req, res) => {
+app.get('/style.css/', (req, res) => {
   res.status(200).sendFile(path.resolve(__dirname, '../client/dist/style.css'))
 })
 
-app.get('/:authorName/:projectId/', (req, res) => {
+app.get('/:projectId/', (req, res) => {
   res.status(200).sendFile(path.resolve(__dirname, '../client/dist/index.html'))
 });
 
 
-app.get('/:authorName/:projectId/comments', (req, res) => {
+app.get('/:projectId/comments', (req, res) => {
   Models.getCommentsByProjectId(req.params.projectId, (dbErr, dbRes) => {
     if (dbErr) {
       console.log(dbErr)
@@ -52,7 +52,7 @@ app.get('/:authorName/:projectId/comments', (req, res) => {
   });
 });
 
-app.post('/:authorName/:projectId', (req, res) => {
+app.post('/:projectId', (req, res) => {
   const newComment = {
     id: req.body.id,
     author: req.body.author,
@@ -73,7 +73,7 @@ app.post('/:authorName/:projectId', (req, res) => {
   });
 });
 
-app.post('/:authorName/:projectId/:commentId', (req, res) => {
+app.post('/:projectId/:commentId', (req, res) => {
   const newComment = {
     id: req.body.id,
     author: req.body.author,
@@ -94,7 +94,7 @@ app.post('/:authorName/:projectId/:commentId', (req, res) => {
   });
 });
 
-app.put('/:authorName/:projectId/:commentId', (req, res) => {
+app.put('/:projectId/:commentId', (req, res) => {
   // const newComment = {
   //   id: req.body.id,
   //   author: req.body.author,
@@ -119,7 +119,7 @@ app.put('/:authorName/:projectId/:commentId', (req, res) => {
   res.send(/*TODO*/);
 });
 
-app.put('/:authorName/:projectId/:commentId/:replyId', (req, res) => {
+app.put('/:projectId/:commentId/:replyId', (req, res) => {
   // const newComment = {
   //   id: req.body.id,
   //   author: req.body.author,
@@ -135,14 +135,14 @@ app.put('/:authorName/:projectId/:commentId/:replyId', (req, res) => {
   res.send(/*TODO*/);
 });
 
-app.delete('/:authorName/:projectId/:commentId/:replyId', (req, res) => {
+app.delete('/:projectId/:commentId/:replyId', (req, res) => {
 
   // // Models.deleteReply(req, res);
   // DELETE BELOW WHEN COMPLETE:
   res.send(/*TODO*/);
 });
 
-app.delete('/:authorName/:projectId/:commentId', (req, res) => {
+app.delete('/:projectId/:commentId', (req, res) => {
   // Models.deleteComment(req, res);
 
   // DELETE BELOW WHEN COMPLETE:

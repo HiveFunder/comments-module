@@ -18,7 +18,7 @@ class App extends React.Component {
     const splitURL = window.location.href.split('/');
     console.log(splitURL);
     const projectId = typeof parseInt(splitURL[splitURL.length - 1]) === 'number' ? splitURL[splitURL.length - 1] : 44;
-    $.get(`/foobar/${projectId}/comments`, (data) => {
+    $.get(`http://localhost:3001/${projectId}/comments`, (data) => {
       console.log('Server response:', data);
       this.setState({
         _id: data.id,
