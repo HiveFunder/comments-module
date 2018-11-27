@@ -27,8 +27,6 @@ const createReply = (projectId, commentId, replyId, newComment, callback) => {
   client.query('UPDATE projects SET comments=((SELECT comments -> $1 -> replies -> -1 FROM projects WHERE _id=$4 || $3) || $3) WHERE _id=$4;', queryArgs, callback);
 };
 
-
-
 //    STRETCH GOALS
 // -------------------
 // const updateComment = (projectId, commentId, replyId, newComment, callback) => {
@@ -45,7 +43,7 @@ const createReply = (projectId, commentId, replyId, newComment, callback) => {
 
 // const deleteComment = (req, res) => {
 
-//  };
+// };
 
 module.exports = {
  getCommentsByProjectId,

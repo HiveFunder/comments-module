@@ -43,24 +43,21 @@ const getRandomProfilePic = () => {
   return otherPics[getRandomInt(0, otherPics.length)];
 };
 
-const randomBodyLength = () => {
-  if (getRandomInt(1, 11) > 6) {
-    return faker.lorem.paragraph();
-  }
-  return faker.lorem.paragraphs();
+const getBody = () => {
+  return faker.lorem.sentence();
 };
 
 var replies;
 var author;
 const generateReplies = () => {
   replies = [];
-  for (var i = 0; i < getRandomInt(0, 4); i += 1) {
+  for (var i = 0; i < getRandomInt(0, 2); i += 1) {
     replies.push({
       "id": i,
       "author": isCreator(50, author),
       "profilePicture": getRandomProfilePic(),
       "createdAt": faker.date.recent(),
-      "body": randomBodyLength(),
+      "body": getBody(),
     });
   }
   return replies;
@@ -81,7 +78,7 @@ const getChunk = (i) => {
       "author": isCreator(1, author),
       "profilePicture": getRandomProfilePic(),
       "createdAt": faker.date.recent(),
-      "body": randomBodyLength(),
+      "body": getBody(),
       "replies": generateReplies(),
     });
   }
