@@ -1,6 +1,6 @@
 const config ={
-  CONNECTION_STRING: 'FILL_ME_IN',
-  NR_KEY: 'FILL_ME_IN',
+  CONNECTION_STRING: process.env.CONNECTION_STRING,
+  NR_KEY: process.env.NR_KEY,
 };
 
-modules.exports = config;
+module.exports = config;
