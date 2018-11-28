@@ -1,11 +1,20 @@
 var fs = require('fs');
-const db = require('./database/index.js');
 const path = require('path');
 
 let startTime = new Date().getTime();
 const projectsToImport = 10;
 
+const client = new Client({
+  connectionString: config.CONNECTION_STRING
+})
+client.connect()
+.then(results => console.log('connection success!'))
+.catch(error => console.error('connection error!', error));
 
+// Postgres Model Methods---------------------------
+const getCommentsByProjectId = (projectId, callback) => {
+  client.query('SELECT * FROM projects WHERE _id = $1', [projectId], callback);
+};
 //--------------
 
 const seedPostgresData = () => {
@@ -13,15 +22,15 @@ const seedPostgresData = () => {
 
   startTime = new Date().getTime();
 
-  // Create campaign table, load to DB
-  db.query(`CREATE TABLE IF NOT EXISTS projects (_id SERIAL PRIMARY KEY, author TEXT, comments JSON);`)
-    .catch((err) => console.error(err) );
-  db.query(`COPY projects(_id, author, comments) FROM '${csvData}' CSV HEADER;`)
-    .catch((err) => console.error(err) );
-
-  console.log(`Seeded campaigns in ${new Date().getTime() - startTime} ms`);
-
-  db.end();
+  client.query(`\copy projects(_id, author, comments) FROM '${csvData}' CSV HEADER;`)
+    .then((results) => {
+        console.log(`Seeded campaigns in ${new Date().getTime() - startTime} ms`);
+        client.end();
+    })
+    .catch((err) => {
+      console.error(err)
+      client.end();
+    });
 }
 
 seedPostgresData();

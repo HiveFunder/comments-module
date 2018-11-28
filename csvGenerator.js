@@ -98,7 +98,6 @@ const write = () => {
     i += 1
     projectsChunk = getChunk(i);
     if(!stream.write(projectsChunk)) {
-     // console.log('writing', i, '! ... waiting!');
       break;
     }
     if (i >= projectsToMake) {
