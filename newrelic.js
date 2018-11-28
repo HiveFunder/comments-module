@@ -1,5 +1,6 @@
-const NRConfig = require('./config.js');
-'use strict'
+// CONFIGURED FOR EC2 INSTANCE! comment out line 6 and uncomment line 7 for dev env.
+const NRConfig = require('../ec2config.js');
+// const NRConfig = require('../config.js');'use strict'
 /**
  * New Relic agent configuration.
  *
@@ -14,7 +15,7 @@ exports.config = {
   /**
    * Your New Relic license key.
    */
-  license_key: NRConfig.NR_key,
+  license_key: NRConfig.NR_KEY,
   logging: {
     /**
      * Level at which to log. 'trace' is most useful to New Relic when diagnosing
