@@ -1,3 +1,10 @@
+// CONFIGURED FOR EC2 INSTANCE! comment out line 6 and uncomment line 7 for dev env.
+const config = require('../ec2config.js');
+// const config = require('../config.js');
+
+let NRConfig = require('../newrelic.js');
+NRConfig.license_key = config.NR_KEY;
+
 require('newrelic');
 const express = require('express');
 const path = require('path');
