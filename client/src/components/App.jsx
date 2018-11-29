@@ -3,6 +3,7 @@ import $ from 'jquery';
 import List from './List';
 import Post from './Post';
 import styles from '../../dist/style.css';
+import config from '../../../ec2config.js';
 
 class App extends React.Component {
   constructor() {
@@ -18,7 +19,7 @@ class App extends React.Component {
     const splitURL = window.location.href.split('/');
     console.log(splitURL);
     const projectId = typeof parseInt(splitURL[splitURL.length - 1]) === 'number' ? splitURL[splitURL.length - 1] : 44;
-    $.get(`http://localhost:3001/${projectId}/comments`, (data) => {
+    $.get(`http://${config.EC2_HOSTNAME}/${projectId}/comments`, (data) => {
       console.log('Server response:', data);
       this.setState({
         _id: data.id,

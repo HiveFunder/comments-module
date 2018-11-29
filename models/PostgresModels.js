@@ -8,9 +8,7 @@ const config = require('../ec2config.js');
 
 console.log(config);
 
-const client = new Client({
-  connectionString: config.CONNECTION_STRING
-})
+const client = new Client(config.PG_CONNECTION);
 client.connect()
 .then(results => console.log('connection success!'))
 .catch(error => console.error('connection error!', error));

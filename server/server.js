@@ -1,10 +1,3 @@
-// CONFIGURED FOR EC2 INSTANCE! comment out line 6 and uncomment line 7 for dev env.
-const config = require('../ec2config.js');
-// const config = require('../config.js');
-
-let NRConfig = require('../newrelic.js');
-NRConfig.license_key = config.NR_KEY;
-
 require('newrelic');
 const express = require('express');
 const path = require('path');
@@ -13,7 +6,7 @@ const bodyParser = require('body-parser');
 const Models = require('../models/PostgresModels.js');
 const app = express();
 
-const port = 3001;
+const port = 80;
 
 const deleteCallback = (dbErr, dbRes) => {
   if (dbErr) {
@@ -25,6 +18,7 @@ const deleteCallback = (dbErr, dbRes) => {
   }
 };
 
+let cache = [];
 
 app.use(cors());
 app.use(express.static(path.resolve(__dirname, '../client/dist')));
@@ -49,6 +43,7 @@ app.get('/:projectId/', (req, res) => {
 
 
 app.get('/:projectId/comments', (req, res) => {
+  if(cache[req.params.projectId])
   Models.getCommentsByProjectId(req.params.projectId, (dbErr, dbRes) => {
     if (dbErr) {
       console.log(dbErr)

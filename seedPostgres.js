@@ -1,6 +1,13 @@
 var fs = require('fs');
 const path = require('path');
 
+const { Client } = require('pg')
+
+// CONFIGURED FOR EC2 INSTANCE! comment out line 6 and uncomment line 7 for dev env.
+const config = require('../ec2config.js');
+// const config = require('../config.js');
+
+
 let startTime = new Date().getTime();
 const projectsToImport = 10;
 

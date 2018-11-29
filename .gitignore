@@ -9,3 +9,6 @@ images/
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
 config.js
+ec2config.js
+newrelic.js
+newrelic_agent.log
